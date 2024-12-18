@@ -2,11 +2,8 @@
 #include "stdlib.h"
 #include <stdbool.h>
 
-Stack* stack_initialize() {
-	Stack* stack = malloc(sizeof(Stack));
-	if (stack != NULL) {
-		stack->top = NULL;
-	}
+Stack stack_initialize() {
+	Stack stack = { NULL };
 	return stack;
 }
 
@@ -46,12 +43,18 @@ void stack_clear(Stack* stack) {
 	}
 }
 
-void* stack_get(Stack* stack, int depth) {
+void* stack_get(Stack stack, int depth) {
 
-	StackNode* current_node = stack->top;
+	int counter = 1;
 
-	for (int i = 2; i <= depth; i++) {
-		current_node = current_node->next;
+	while (stack.top != NULL) {
+		if (counter == depth) {
+			return stack.top->item;
+			break;
+		}
+		printf("%s\n", stack.top->item);
+		StackNode* new_top = stack.top->next;
+		stack.top = new_top;
+		counter++;
 	}
-	return current_node;
 }

@@ -25,7 +25,7 @@ void ui_pop_from_stack(Stack* stack);
 void ui_clear_stack(Stack* stack);
 
 void ui_save_to_disk(Stack stack);
-void ui_load_from_disk(Stack stack);
+void ui_load_from_disk(Stack* stack);
 
 void ui_update_state(enum MenuState* state, unsigned short new_state);
 void ui_print_menu();

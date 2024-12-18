@@ -12,7 +12,7 @@ typedef struct Stack {
     struct StackNode* top;
 } Stack;
 
-Stack* stack_initialize();
+Stack stack_initialize();
 
 bool stack_push(Stack* stack, void* item);
 
@@ -22,7 +22,7 @@ void* stack_top(Stack* stack);
 
 void stack_clear(Stack* stack);
 
-void* stack_get(Stack* stack, int depth);
+void* stack_get(Stack stack, int depth);
 
 // Save the stack to a file
 int stack_save(Stack* stack, const char* filename);

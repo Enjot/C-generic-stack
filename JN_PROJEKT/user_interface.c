@@ -6,7 +6,7 @@
 
 void ui_run_menu() {
 
-	struct Stack* stack = stack_initialize();
+	struct Stack stack = stack_initialize();
 
 	enum MenuState state = MAIN_MENU;
 
@@ -21,25 +21,25 @@ void ui_run_menu() {
 			// option "0" - it's hidden
 			break;
 		case PRINT_STACK:
-			ui_print_stack(*stack);
+			ui_print_stack(stack);
 			ui_update_state(&state, MAIN_MENU);
 			break;
 		case PRINT_TOP:
-			ui_print_top(*stack);
+			ui_print_top(stack);
 			break;
 		case PRINT_AT_DEPTH:
-			ui_print_at_depth(*stack);
+			ui_print_at_depth(stack);
 			break;
 		case PUSH_TO_STACK:
 			// TODO run corresponding function
-			ui_push_to_stack(stack);
+			ui_push_to_stack(&stack);
 			ui_update_state(&state, MAIN_MENU);
 			break;
 		case POP_FROM_STACK:
-			ui_pop_from_stack(stack);
+			ui_pop_from_stack(&stack);
 			break;
 		case CLEAR_STACK:
-			ui_clear_stack(stack);
+			ui_clear_stack(&stack);
 			break;
 		case SAVE_TO_DISK:
 			break;
@@ -81,13 +81,13 @@ void ui_print_top(Stack stack) {
 	ui_press_any_key_to_continue();
 }
 
-void ui_print_at_depth(Stack* stack) {
+void ui_print_at_depth(Stack stack) {
 	int depth = 1;
 	printf("Enter depth: ");
 	scanf_s("%d", &depth);
-	StackNode* node = stack_get(&stack, depth);
+	void* item = stack_get(stack, depth);
 	ui_clear();
-	printf("%s", node->item);
+	printf("%s", item);
 	ui_press_any_key_to_continue();
 }
 
@@ -186,6 +186,6 @@ static void ui_clear() {
 }
 
 static void ui_press_any_key_to_continue() {
-	printf("\nPress eny key to continue... ");
+	printf("\nPress any key to continue... ");
 	getch();
 }
