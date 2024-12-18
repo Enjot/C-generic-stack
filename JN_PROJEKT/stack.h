@@ -21,5 +21,13 @@ void stack_clear(Stack* stack);
 void* stack_top(Stack stack);
 void* stack_get(Stack stack, const int depth);
 
-void stack_save(Stack stack, const char* filename);
-void stack_load(Stack* stack, const char* filename);
+void stack_save_to_file(
+	Stack* stack,
+	const char* filename,
+	size_t(*serialize)(void* item, FILE* file)
+);
+void stack_load_from_file(
+	Stack* stack,
+	const char* filename,
+	void* (*deserialize)(FILE* file)
+);

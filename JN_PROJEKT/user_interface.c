@@ -44,11 +44,10 @@ void ui_run_menu() {
 			ui_clear_stack(&stack);
 			break;
 		case SAVE_TO_DISK:
-			ui_save_to_disk(stack);
+			ui_save_stack(&stack);
 			break;
 		case LOAD_FROM_DISK:
-			ui_load_from_disk(&stack);
-			ui_press_any_key_to_continue();
+			ui_load_stack(&stack);
 			break;
 		case EXIT:
 			// TODO run corresponding function
@@ -64,13 +63,12 @@ void ui_print_stack(Stack stack) {
 		printf("Stack is empty\n");
 	}
 	else {
-		ui_print_student_header();
-		while (stack.top != NULL) {
-			MyStudent* student = (MyStudent*)stack.top->item;
-			ui_student_print(student);
-
-			StackNode* new_top = stack.top->next;
-			stack.top = new_top;
+		student_print_header();
+		StackNode* current_node = stack.top;
+		while (current_node != NULL) {
+			MyStudent* student = (MyStudent*)current_node->item;
+			student_print(student);
+			current_node = current_node->next;
 		}
 	}
 
@@ -82,8 +80,8 @@ void ui_print_top(Stack stack) {
 		printf("Stack is empty\n");
 	}
 	else {
-		ui_print_student_header();
-		ui_student_print(stack.top->item);
+		student_print_header();
+		student_print(stack.top->item);
 	}
 
 	ui_press_any_key_to_continue();
@@ -95,8 +93,8 @@ void ui_print_at_depth(Stack stack) {
 	scanf_s("%d", &depth);
 	void* item = stack_get(stack, depth);
 	ui_clear();
-	ui_print_student_header();
-	ui_student_print(item);
+	student_print_header();
+	student_print(item);
 	ui_press_any_key_to_continue();
 }
 
@@ -114,11 +112,11 @@ void ui_push_to_stack(Stack* stack) {
 	printf("Enter year of birth: ");
 	scanf_s("%d", &birth_year);
 	ui_clear();
-	ui_print_fields_of_study();
+	student_print_fields_of_study();
 	printf("Choose field of study: ");
 	scanf_s("%d", &field_of_study);
 
-	MyStudent* student = my_student_create(surname, birth_year, field_of_study);
+	MyStudent* student = student_create(surname, birth_year, field_of_study);
 
 	stack_push(stack, student);
 }
@@ -131,12 +129,20 @@ void ui_clear_stack(Stack* stack) {
 	stack_clear(stack);
 }
 
-void ui_save_to_disk(Stack stack) {
-	stack_save(stack, "backup.bin");
+void ui_save_stack(Stack* stack) {
+	stack_save_to_file(
+		stack,
+		"backup.bin",
+		student_serialize
+	);
 }
 
-void ui_load_from_disk(Stack* stack) {
-	stack_load(stack, "backup.bin");
+void ui_load_stack(Stack* stack) {
+	stack_load_from_file(
+		stack,
+		"backup.bin",
+		student_deserialize
+	);
 }
 
 void ui_on_event(
@@ -208,49 +214,4 @@ void ui_clear() {
 void ui_press_any_key_to_continue() {
 	printf("\nPress any key to continue... ");
 	getch();
-}
-
-void ui_student_print(MyStudent* student) {
-	char* field_of_study = ui_formatted_field_of_study(student->field_of_study);
-	printf("%-25s| %-15d%| %s\n", student->surname, student->birth_year, field_of_study);
-}
-
-char* ui_formatted_field_of_study(FieldOfStudy field_of_study) {
-	switch (field_of_study) {
-	case COMPUTER_SCIENCE:
-		return "Computer Science";
-	case MATH:
-		return "Mathematics";
-	case PSYCHOLOGY:
-		return "Psychology";
-	case LAW:
-		return "Law";
-	case MEDICINE:
-		return "Medicine";
-	case PHYSICS:
-		return "Physics";
-	case PHILOSOPHY:
-		return "Philosophy";
-	default:
-		exit(EXIT_FAILURE);
-	}
-}
-
-void ui_print_fields_of_study() {
-	printf("~~~~~ FIELDS OF STUDY ~~~~~\n");
-	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-	printf("~ 1. Computer Science     ~\n");
-	printf("~ 2. Mathematics          ~\n");
-	printf("~ 3. Psychology           ~\n");
-	printf("~ 4. Law                  ~\n");
-	printf("~ 5. Medicine             ~\n");
-	printf("~ 6. Physics              ~\n");
-	printf("~ 7. Philosophy           ~\n");
-	printf("~ 8. Mechanics            ~\n");
-	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-}
-
-void ui_print_student_header() {
-	printf("%-25s| %-15s%| %s\n", "SURNAME", "BIRTH YEAR", "FIELD OF STUDY");
-	printf("----------------------------------------------------------\n");
 }

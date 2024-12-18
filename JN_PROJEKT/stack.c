@@ -2,6 +2,7 @@
 #include "stdlib.h"
 #include <stdbool.h>
 #include <string.h>
+#include "error_handler.h"
 
 Stack stack_initialize() {
 	Stack stack = { NULL };
@@ -59,29 +60,65 @@ void* stack_get(Stack stack, const int depth) {
 	}
 }
 
-void stack_save(Stack stack, const char* filename) {
+bool stack_save_to_file(
+	Stack* stack,
+	const char* filename,
+	size_t(*serialize)(void* item, FILE* file)
+) {
+	if (!stack || !filename || !serialize) return false; // TODO
 
 	FILE* file = fopen(filename, "wb");
+	if (file == NULL) error_open_file();
 
-	StackNode* current = stack.top;
-
-	while (current) {
-		
+	StackNode* current_node = stack->top;
+	while (current_node) {
+		if (serialize(current_node->item, file) == 0) {
+			fclose(file);
+			return false;
+		}
+		current_node = current_node->next;
 	}
 
-	size_t num_written = fwrite(stack.top->item, sizeof(char[64]), 1, file);
-
 	fclose(file);
+	return true;
 }
 
-void stack_load(Stack* stack, const char* filename) {
+void stack_load_from_file(
+	Stack* stack,
+	const char* filename,
+	void* (*deserialize)(FILE* file)
+) {
+	//if (!stack || !filename || !deserialize) exit(EXIT_FAILURE); // TODO
 
 	FILE* file = fopen(filename, "rb");
+	//if (file == NULL) exit(EXIT_FAILURE); // TODO
 
-	char item[64];
+	Stack temp_stack = stack_initialize();
 
-	fread(&item, sizeof(char[64]), 1, file);
-	printf("%s", item);
+	while (!feof(file)) {
+		void* item = deserialize(file);
+		if (item) {
+			if (!stack_push(&temp_stack, item)) {
+				// TODO
+				// Jeœli push siê nie powiedzie, zwalniamy dane
+				/*if (stack->destroy) {
+					stack->destroy(data);
+				}*/
+				fclose(file);
+				//exit(EXIT_FAILURE);
+				return false;
+			}
+			
+		}
+	}
 
 	fclose(file);
+
+	//stack_free(stack);
+
+	while (temp_stack.top != NULL) {
+		void* item = temp_stack.top->item;
+		stack_push(stack, item);
+		stack_pop(&temp_stack);
+	}
 }
