@@ -66,6 +66,7 @@ void ui_print_stack(Stack stack) {
 	else {
 		printf("Stack elements:\n");
 		printf("%-25s| %-15s%| %s\n", "SURNAME", "BIRTH YEAR", "FIELD OF STUDY");
+		printf("----------------------------------------------------------\n");
 		while (stack.top != NULL) {
 			MyStudent* student = (MyStudent*)stack.top->item;
 			ui_student_print(student);
@@ -239,15 +240,15 @@ char* ui_formatted_field_of_study(FieldOfStudy field_of_study) {
 }
 
 void ui_print_fields_of_study() {
-	printf("===========================\n");
-	printf("===== FIELDS OF STUDY =====\n");
-	printf("===========================\n");
-	printf("= 1. Computer Science     =\n");
-	printf("= 2. Mathematics          =\n");
-	printf("= 3. Psychology           =\n");
-	printf("= 4. Law                  =\n");
-	printf("= 5. Medicine             =\n");
-	printf("= 6. Physics              =\n");
-	printf("= 7. Philosophy           =\n");
-	printf("===========================\n");
+	printf("~~~~~ FIELDS OF STUDY ~~~~~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("~ 1. Computer Science     ~\n");
+	printf("~ 2. Mathematics          ~\n");
+	printf("~ 3. Psychology           ~\n");
+	printf("~ 4. Law                  ~\n");
+	printf("~ 5. Medicine             ~\n");
+	printf("~ 6. Physics              ~\n");
+	printf("~ 7. Philosophy           ~\n");
+	printf("~ 8. Mechanics            ~\n");
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }

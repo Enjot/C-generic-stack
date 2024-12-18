@@ -8,7 +8,8 @@ typedef enum FieldOfStudy {
 	LAW = 4,
 	MEDICINE = 5,
 	PHYSICS = 6,
-	PHILOSOPHY = 7
+	PHILOSOPHY = 7,
+	MECHANICS = 8
 } FieldOfStudy;
 
 typedef struct {
