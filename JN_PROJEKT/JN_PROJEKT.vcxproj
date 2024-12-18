@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="stack.c" />
     <ClCompile Include="user_interface.c" />
   </ItemGroup>
   <ItemGroup>

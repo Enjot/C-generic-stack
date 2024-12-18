@@ -2,33 +2,48 @@
 #include "user_interface.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "stack.h"
 
 void ui_run_menu() {
+
+	struct Stack* stack = stack_initialize();
 
 	enum MenuState state = MAIN_MENU;
 
 	while (state != EXIT) {
 		ui_print_menu();
-		unsigned short chosen_state;
-		scanf_s("%hu", &chosen_state);
-		update_state(&state, chosen_state);
+		unsigned short selected_state;
+		scanf_s("%hu", &selected_state);
+		update_state(&state, selected_state);
+		ui_clear();
 		switch (state) {
 		case MAIN_MENU:
+			// option "0" - it's hidden
 			break;
 		case PRINT_STACK:
+			ui_print_stack(*stack);
+			update_state(&state, MAIN_MENU);
+			break;
+		case PRINT_TOP:
 			// TODO run corresponding function
 			break;
-		case PRINT_TOP_FROM_STACK:
+		case PRINT_AT_DEPTH:
 			// TODO run corresponding function
 			break;
-		case PRINT_FROM_STACK:
+		case PUSH_TO_STACK:
 			// TODO run corresponding function
+			ui_push_to_stack(stack);
+			update_state(&state, MAIN_MENU);
 			break;
-		case ADD_TO_STACK:
-			// TODO run corresponding function
+		case POP_FROM_STACK:
+			ui_pop_from_stack(stack);
 			break;
-		case REMOVE_FROM_STACK:
-			// TODO run corresponding function
+		case CLEAR_STACK:
+			ui_clear_stack(stack);
+			break;
+		case SAVE_TO_DISK:
+			break;
+		case LOAD_FROM_DISK:
 			break;
 		case EXIT:
 			// TODO run corresponding function
@@ -39,11 +54,71 @@ void ui_run_menu() {
 	}
 }
 
+void ui_print_menu() {
+	ui_clear();
+	printf("==============================\n");
+	printf("====== STACK MANAGEMENT ======\n");
+	printf("==============================\n");
+	printf("== 1. PRINT STACK           ==\n");
+	printf("== 2. PRINT TOP             ==\n");
+	printf("== 3. PRINT AT DEPTH        ==\n");
+	printf("==                          ==\n");
+	printf("== 4. PUSH TO STACK         ==\n");
+	printf("== 5. POP FROM STACK        ==\n");
+	printf("== 6. CLEAR STACK           ==\n");
+	printf("==                          ==\n");
+	printf("== 7. SAVE TO DISK          ==\n");
+	printf("== 8. LOAD FROM DISK        ==\n");
+	printf("==                          ==\n");
+	printf("== 9. EXIT                  ==\n");
+	printf("==============================\n");
+	printf("CHOOSE ACTION: ");
+}
+
+static void ui_clear() {
+	system("cls");
+}
+
+void ui_print_stack(Stack stack) {
+	if (stack.top == NULL) {
+		printf("Stack is empty\n");
+	}
+	else {
+		printf("Stack elements:\n");
+		while (stack.top != NULL) {
+			printf("%s\n", stack.top->item);
+			StackNode* new_top = stack.top->next;
+			stack.top = new_top;
+		}
+	}
+	
+	printf("\nPress eny key to continue...");
+	getch();
+}
+
+void ui_push_to_stack(Stack* stack) {
+	char* element = malloc(sizeof(char) * 64);
+
+	ui_clear();
+	printf("Enter your element: ");
+	scanf_s("%s", element, 64);
+	stack_push(stack, element);
+}
+
+void ui_pop_from_stack(Stack* stack) {
+	stack_pop(stack);
+	printf("Removed top element from stack\n\n");
+	ui_print_stack(*stack);
+}
+
+void ui_clear_stack(Stack* stack) {
+	stack_clear(stack);
+}
+
 static void update_state(
 	enum MenuState* state,
 	unsigned short new_state
 ) {
-	ui_clear();
 	switch (new_state) {
 	case 0:
 		*state = MAIN_MENU;
@@ -52,40 +127,31 @@ static void update_state(
 		*state = PRINT_STACK;
 		break;
 	case 2:
-		*state = PRINT_TOP_FROM_STACK;
+		*state = PRINT_TOP;
 		break;
 	case 3:
-		*state = PRINT_FROM_STACK;
+		*state = PRINT_AT_DEPTH;
 		break;
 	case 4:
-		*state = ADD_TO_STACK;
+		*state = PUSH_TO_STACK;
 		break;
 	case 5:
-		*state = REMOVE_FROM_STACK;
+		*state = POP_FROM_STACK;
 		break;
 	case 6:
+		*state = CLEAR_STACK;
+		break;
+	case 7:
+		*state = SAVE_TO_DISK;
+		break;
+	case 8:
+		*state = LOAD_FROM_DISK;
+		break;
+	case 9:
 		*state = EXIT;
 		break;
 	default:
-		// TODO some error handling
+		// TODO some invalid input handling
 		*state = MAIN_MENU;
 	}
-}
-
-void ui_print_menu() {
-	printf("==============================\n");
-	printf("====== STACK MANAGEMENT ======\n");
-	printf("==============================\n");
-	printf("= 1. PRINT STACK             =\n");
-	printf("= 2. PRINT TOP ELEMENT       =\n");
-	printf("= 3. FIND ELEMENT            =\n");
-	printf("= 4. ADD TO STACK            =\n");
-	printf("= 5. REMOVE FROM STACK       =\n");
-	printf("= 6. EXIT                    =\n");
-	printf("==============================\n");
-	printf("CHOOSE ACTION: ");
-}
-
-static void ui_clear() {
-	system("cls");
 }

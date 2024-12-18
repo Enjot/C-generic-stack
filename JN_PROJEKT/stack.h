@@ -1,10 +1,31 @@
 #pragma once
 
-void stk_initialize();
-void stk_clear();
-void stk_add();
-void stk_remove();
-void stk_get_top();
-void stk_get(int index);
-void stk_save();
-void stk_load();
+#include <stdio.h>
+#include "stdbool.h"
+
+typedef struct StackNode {
+    void* item;
+    struct StackNode* next;
+} StackNode;
+
+typedef struct Stack {
+    struct StackNode* top;
+} Stack;
+
+Stack* stack_initialize();
+
+bool stack_push(Stack* stack, void* item);
+
+bool stack_pop(Stack* stack);
+
+void* stack_top(Stack* stack);
+
+void stack_clear(Stack* stack);
+
+void* stack_get(Stack* stack, int depth);
+
+// Save the stack to a file
+int stack_save(Stack* stack, const char* filename);
+
+// Load the stack from a file
+struct Stack* stack_load(const char* filename);
