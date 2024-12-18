@@ -46,6 +46,12 @@ void stack_clear(Stack* stack) {
 	}
 }
 
-void* stack_get(Stack* stack) {
+void* stack_get(Stack* stack, int depth) {
 
+	StackNode* current_node = stack->top;
+
+	for (int i = 2; i <= depth; i++) {
+		current_node = current_node->next;
+	}
+	return current_node;
 }
