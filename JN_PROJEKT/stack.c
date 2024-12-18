@@ -1,6 +1,7 @@
 #include "stack.h"
 #include "stdlib.h"
 #include <stdbool.h>
+#include <string.h>
 
 Stack stack_initialize() {
 	Stack stack = { NULL };
@@ -33,8 +34,8 @@ bool stack_pop(Stack* stack) {
 	return true;
 }
 
-void* stack_top(Stack* stack) {
-	return stack->top;
+void* stack_top(Stack stack) {
+	return stack.top;
 }
 
 void stack_clear(Stack* stack) {
@@ -43,7 +44,7 @@ void stack_clear(Stack* stack) {
 	}
 }
 
-void* stack_get(Stack stack, int depth) {
+void* stack_get(Stack stack, const int depth) {
 
 	int counter = 1;
 
@@ -52,9 +53,35 @@ void* stack_get(Stack stack, int depth) {
 			return stack.top->item;
 			break;
 		}
-		printf("%s\n", stack.top->item);
 		StackNode* new_top = stack.top->next;
 		stack.top = new_top;
 		counter++;
 	}
+}
+
+void stack_save(Stack stack, const char* filename) {
+
+	FILE* file = fopen(filename, "wb");
+
+	StackNode* current = stack.top;
+
+	while (current) {
+		
+	}
+
+	size_t num_written = fwrite(stack.top->item, sizeof(char[64]), 1, file);
+
+	fclose(file);
+}
+
+void stack_load(Stack* stack, const char* filename) {
+
+	FILE* file = fopen(filename, "rb");
+
+	char item[64];
+
+	fread(&item, sizeof(char[64]), 1, file);
+	printf("%s", item);
+
+	fclose(file);
 }
