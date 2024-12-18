@@ -5,6 +5,7 @@
 #include "stack.h"
 #include "my_student.h">
 #include <string.h>
+#include "util.h"
 
 void ui_run_menu() {
 
@@ -17,7 +18,7 @@ void ui_run_menu() {
 		unsigned short selected_state;
 		scanf_s("%hu", &selected_state);
 		ui_on_event(&event, selected_state);
-		ui_clear();
+		util_clear_screen();
 		switch (event) {
 		case MAIN_MENU:
 			// option "0" - it's hidden
@@ -58,7 +59,7 @@ void ui_run_menu() {
 	}
 }
 
-void ui_print_stack(Stack stack) {
+static void ui_print_stack(Stack stack) {
 	if (stack.top == NULL) {
 		printf("Stack is empty\n");
 	}
@@ -72,10 +73,10 @@ void ui_print_stack(Stack stack) {
 		}
 	}
 
-	ui_press_any_key_to_continue();
+	util_press_any_key_to_continue();
 }
 
-void ui_print_top(Stack stack) {
+static void ui_print_top(Stack stack) {
 	if (stack.top == NULL) {
 		printf("Stack is empty\n");
 	}
@@ -84,34 +85,34 @@ void ui_print_top(Stack stack) {
 		student_print(stack.top->item);
 	}
 
-	ui_press_any_key_to_continue();
+	util_press_any_key_to_continue();
 }
 
-void ui_print_at_depth(Stack stack) {
+static void ui_print_at_depth(Stack stack) {
 	int depth = 1;
 	printf("Enter depth: ");
 	scanf_s("%d", &depth);
 	void* item = stack_get(stack, depth);
-	ui_clear();
+	util_clear_screen();
 	student_print_header();
 	student_print(item);
-	ui_press_any_key_to_continue();
+	util_press_any_key_to_continue();
 }
 
-void ui_push_to_stack(Stack* stack) {
+static void ui_push_to_stack(Stack* stack) {
 
 	char surname[256];
 	int birth_year;
 	FieldOfStudy field_of_study;
 
-	ui_clear();
+	util_clear_screen();
 	printf("ADDING STUDENT TO STACK\n");
 	printf("Enter surname: ");
 	scanf_s("%s", surname, 256);
-	ui_clear();
+	util_clear_screen();
 	printf("Enter year of birth: ");
 	scanf_s("%d", &birth_year);
-	ui_clear();
+	util_clear_screen();
 	student_print_fields_of_study();
 	printf("Choose field of study: ");
 	scanf_s("%d", &field_of_study);
@@ -121,15 +122,15 @@ void ui_push_to_stack(Stack* stack) {
 	stack_push(stack, student);
 }
 
-void ui_pop_from_stack(Stack* stack) {\
+static void ui_pop_from_stack(Stack* stack) {\
 	stack_pop(stack);
 }
 
-void ui_clear_stack(Stack* stack) {
+static void ui_clear_stack(Stack* stack) {
 	stack_clear(stack);
 }
 
-void ui_save_stack(Stack* stack) {
+static void ui_save_stack(Stack* stack) {
 	stack_save_to_file(
 		stack,
 		"backup.bin",
@@ -137,7 +138,7 @@ void ui_save_stack(Stack* stack) {
 	);
 }
 
-void ui_load_stack(Stack* stack) {
+static void ui_load_stack(Stack* stack) {
 	stack_load_from_file(
 		stack,
 		"backup.bin",
@@ -145,7 +146,7 @@ void ui_load_stack(Stack* stack) {
 	);
 }
 
-void ui_on_event(
+static void ui_on_event(
 	enum MenuEvent* event,
 	unsigned short selected_event
 ) {
@@ -186,8 +187,8 @@ void ui_on_event(
 	}
 }
 
-void ui_print_menu() {
-	ui_clear();
+static void ui_print_menu() {
+	util_clear_screen();
 	printf("=========== STACK MANAGEMENT ===========\n");
 	printf("========================================\n");
 	printf("== 1. PRINT STACK                     ==\n");
@@ -204,14 +205,4 @@ void ui_print_menu() {
 	printf("== 9. EXIT                            ==\n");
 	printf("========================================\n");
 	printf("CHOOSE ACTION: ");
-}
-
-
-void ui_clear() {
-	system("cls");
-}
-
-void ui_press_any_key_to_continue() {
-	printf("\nPress any key to continue... ");
-	getch();
 }

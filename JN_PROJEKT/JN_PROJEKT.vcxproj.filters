@@ -27,10 +27,10 @@
     <ClCompile Include="my_student.c">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="unit_test.c">
+    <ClCompile Include="error_handler.c">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="error_handler.c">
+    <ClCompile Include="util.c">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClInclude Include="my_student.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="unit_test.h">
+    <ClInclude Include="error_handler.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="error_handler.h">
+    <ClInclude Include="util.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

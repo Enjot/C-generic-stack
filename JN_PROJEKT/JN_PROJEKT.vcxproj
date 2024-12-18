@@ -131,15 +131,15 @@
     <ClCompile Include="main.c" />
     <ClCompile Include="my_student.c" />
     <ClCompile Include="stack.c" />
-    <ClCompile Include="unit_test.c" />
     <ClCompile Include="user_interface.c" />
+    <ClCompile Include="util.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="error_handler.h" />
     <ClInclude Include="my_student.h" />
     <ClInclude Include="stack.h" />
-    <ClInclude Include="unit_test.h" />
     <ClInclude Include="user_interface.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,17 +17,15 @@ typedef enum MenuEvent {
 
 void ui_run_menu();
 
-void ui_print_stack(Stack stack);
-void ui_print_top(Stack stack);
-void ui_print_at_depth(Stack stack);
-void ui_push_to_stack(Stack* stack);
-void ui_pop_from_stack(Stack* stack);
-void ui_clear_stack(Stack* stack);
+static void ui_print_stack(Stack stack);
+static void ui_print_top(Stack stack);
+static void ui_print_at_depth(Stack stack);
+static void ui_push_to_stack(Stack* stack);
+static void ui_pop_from_stack(Stack* stack);
+static void ui_clear_stack(Stack* stack);
 
-void ui_save_stack(Stack* stack);
-void ui_load_stack(Stack* stack);
+static void ui_save_stack(Stack* stack);
+static void ui_load_stack(Stack* stack);
 
-void ui_on_event(enum MenuEvent* event, unsigned short selected_event);
-void ui_print_menu();
-void ui_clear();
-void ui_press_any_key_to_continue();
+static void ui_on_event(enum MenuEvent* event, unsigned short selected_event);
+static void ui_print_menu();
