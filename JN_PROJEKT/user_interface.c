@@ -64,9 +64,7 @@ void ui_print_stack(Stack stack) {
 		printf("Stack is empty\n");
 	}
 	else {
-		printf("Stack elements:\n");
-		printf("%-25s| %-15s%| %s\n", "SURNAME", "BIRTH YEAR", "FIELD OF STUDY");
-		printf("----------------------------------------------------------\n");
+		ui_print_student_header();
 		while (stack.top != NULL) {
 			MyStudent* student = (MyStudent*)stack.top->item;
 			ui_student_print(student);
@@ -84,7 +82,8 @@ void ui_print_top(Stack stack) {
 		printf("Stack is empty\n");
 	}
 	else {
-		
+		ui_print_student_header();
+		ui_student_print(stack.top->item);
 	}
 
 	ui_press_any_key_to_continue();
@@ -96,7 +95,8 @@ void ui_print_at_depth(Stack stack) {
 	scanf_s("%d", &depth);
 	void* item = stack_get(stack, depth);
 	ui_clear();
-	printf("%s", item);
+	ui_print_student_header();
+	ui_student_print(item);
 	ui_press_any_key_to_continue();
 }
 
@@ -123,10 +123,8 @@ void ui_push_to_stack(Stack* stack) {
 	stack_push(stack, student);
 }
 
-void ui_pop_from_stack(Stack* stack) {
+void ui_pop_from_stack(Stack* stack) {\
 	stack_pop(stack);
-	printf("Removed top element from stack\n\n");
-	ui_print_stack(*stack);
 }
 
 void ui_clear_stack(Stack* stack) {
@@ -134,11 +132,11 @@ void ui_clear_stack(Stack* stack) {
 }
 
 void ui_save_to_disk(Stack stack) {
-	stack_save(stack, "saves.bin");
+	stack_save(stack, "backup.bin");
 }
 
 void ui_load_from_disk(Stack* stack) {
-	stack_load(stack, "saves.bin");
+	stack_load(stack, "backup.bin");
 }
 
 void ui_on_event(
@@ -184,7 +182,6 @@ void ui_on_event(
 
 void ui_print_menu() {
 	ui_clear();
-	printf("========================================\n");
 	printf("=========== STACK MANAGEMENT ===========\n");
 	printf("========================================\n");
 	printf("== 1. PRINT STACK                     ==\n");
@@ -251,4 +248,9 @@ void ui_print_fields_of_study() {
 	printf("~ 7. Philosophy           ~\n");
 	printf("~ 8. Mechanics            ~\n");
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+}
+
+void ui_print_student_header() {
+	printf("%-25s| %-15s%| %s\n", "SURNAME", "BIRTH YEAR", "FIELD OF STUDY");
+	printf("----------------------------------------------------------\n");
 }

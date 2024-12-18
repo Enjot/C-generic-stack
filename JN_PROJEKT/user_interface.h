@@ -39,3 +39,4 @@ void ui_press_any_key_to_continue();
 void ui_student_print(MyStudent* student);
 char* ui_formatted_field_of_study(FieldOfStudy field_of_study);
 void ui_print_fields_of_study();
+void ui_print_student_header();
