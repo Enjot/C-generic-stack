@@ -77,11 +77,7 @@ static void ui_push_to_stack(Stack* stack) {
 	printf("ADDING STUDENT TO STACK\n");
 	printf("Enter surname: ");
 
-	if (scanf_s("%255s", surname, (unsigned)_countof(surname)) != 1) {
-		message_generic("Failed to read surname.");
-		while (getchar() != '\n') {};
-		return;
-	}
+	scanf_s("%s", surname, 256);
 
 	while (getchar() != '\n') {};
 	util_clear_screen();
@@ -227,11 +223,7 @@ static bool compare_student_surname(void* item, void* criteria) {
 static void ui_find_in_stack(Stack* stack) {
 	char target_surname[256];
 	printf("Enter surname to search: ");
-	if (scanf_s("%255s", target_surname, (unsigned)_countof(target_surname)) != 1) {
-		message_generic("Failed to read surname.");
-		while (getchar() != '\n') {};
-		return;
-	}
+	scanf_s("%s", target_surname, 256);
 	while (getchar() != '\n') {};
 
 	void* found_item = stack_find(stack, compare_student_surname, target_surname);

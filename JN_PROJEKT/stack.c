@@ -240,7 +240,6 @@ bool stack_load_from_file(
 		return false;
 	}
 
-
 	stack_clear(stack);
 
 	void* item;
@@ -250,6 +249,7 @@ bool stack_load_from_file(
 				stack->destroy_item(item);
 			}
 			fclose(file);
+			stack_clear(stack);
 			return false;
 		}
 	}
