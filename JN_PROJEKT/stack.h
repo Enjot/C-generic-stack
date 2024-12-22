@@ -15,7 +15,7 @@ typedef struct  {
 
 Stack* stack_init(void (*destroy_item)(void* item));
 void stack_destroy(Stack* stack);
-void stack_clear(Stack* stack);
+bool stack_clear(Stack* stack);
 
 bool stack_push(Stack* stack, void* item);
 void* stack_pop(Stack* stack);

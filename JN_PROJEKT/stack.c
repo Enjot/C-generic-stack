@@ -25,16 +25,19 @@ void stack_destroy(Stack* stack) {
 	}
 }
 
-void stack_clear(Stack* stack) {
+bool stack_clear(Stack* stack) {
 	if (!stack) {
 		error_memory_not_allocated("Stack is not initialized");
-		return;
+		return false;
 	}
 
 	void* item;
 	while ((item = stack_pop(stack)) != NULL) {
-		stack->destroy_item(item);
+		if (stack->destroy_item && item) {
+			stack->destroy_item(item);
+		}
 	}
+	return true;
 }
 
 bool stack_push(Stack* stack, void* item) {
@@ -62,7 +65,6 @@ void* stack_pop(Stack* stack) {
 		return NULL;
 	}
 	if (!stack->top) {
-		error_memory_not_allocated("Stack is empty");
 		return NULL;
 	}
 
@@ -101,15 +103,12 @@ void* stack_get_at_depth(Stack* stack, const int depth) {
 	int counter = 1;
 	StackNode* current = stack->top;
 	while (current) {
-		if (counter == depth) {
-			return current->item;
-			break;
-		}
+		if (counter == depth) return current->item;
+	
 		current = current->next;
 		counter++;
 	}
 
-	error_memory_not_allocated("Depth exceeds stack size");
 	return NULL;
 }
 
@@ -174,7 +173,12 @@ bool stack_save_to_file(
 
 	StackNode* current = stack->top;
 	while (current) {
-		stack_push(temp_stack, current->item);
+		if (!stack_push(temp_stack, current->item)) { // Error checking
+			error_memory_allocation("Couldn't push item to temporary stack");
+			stack_destroy(temp_stack);
+			fclose(file);
+			return false;
+		}
 		current = current->next;
 	}
 
@@ -217,6 +221,8 @@ bool stack_load_from_file(
 		error_file_open("Couldn't open file. Check if file exists");
 		return false;
 	}
+
+	stack_clear(stack);
 
 	void* item;
 	while ((item = deserialize(file)) != NULL) {
