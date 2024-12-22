@@ -1,8 +1,8 @@
 #pragma once
 
-void error_file_open(char* message);
-void error_file_read(char* message);
-void error_file_write(char* message);
+void error_file_open(const char* message, const char* source);
+void error_file_read(const char* message, const char* source);
+void error_file_write(const char* message, const char* source);
 
-void error_memory_not_allocated(char* message);
-void error_memory_allocation(char* message);
+void error_null_pointer(const char* message, const char* source);
+void error_memory_allocation(const char* message, const char* source);

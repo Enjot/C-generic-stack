@@ -1,5 +1,8 @@
 #pragma once
+
 #include <stdio.h>
+#include <stdlib.h>
+#include "stdbool.h"
 
 typedef enum FieldOfStudy {
 	COMPUTER_SCIENCE = 1,
@@ -23,7 +26,7 @@ MyStudent* student_create(char* surname, int birth_year, FieldOfStudy field_of_s
 void student_free(MyStudent* student);
 
 // Serialization
-size_t student_serialize(void* student, FILE* file);
+bool student_serialize(void* student, FILE* file);
 void* student_deserialize(FILE* file);
 
 // UI related

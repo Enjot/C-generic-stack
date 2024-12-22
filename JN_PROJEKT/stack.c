@@ -1,14 +1,14 @@
 #include "stack.h"
 #include "stdlib.h"
-#include <stdbool.h>
-#include <string.h>
 #include "handler_error.h"
 #include "handler_message.h"
+#include <sys/stat.h>
+#include <errno.h>
 
 Stack* stack_init(void (*destroy_item)(void* item)) {
 	Stack* stack = malloc(sizeof(Stack));
 	if (!stack) {
-		error_memory_allocation("Couldn't allocate memory for stack");
+		error_memory_allocation("Couldn't allocate memory for stack", "stack_init()");
 		return NULL;
 	}
 
@@ -27,7 +27,7 @@ void stack_destroy(Stack* stack) {
 
 bool stack_clear(Stack* stack) {
 	if (!stack) {
-		error_memory_not_allocated("Stack is not initialized");
+		error_null_pointer("Stack is not initialized", "stack_clear()");
 		return false;
 	}
 
@@ -42,14 +42,14 @@ bool stack_clear(Stack* stack) {
 
 bool stack_push(Stack* stack, void* item) {
 	if (!stack) {
-		error_memory_not_allocated("Stack is not initialized");
+		error_null_pointer("Stack is not initialized", "stack_push()");
 		return false;
 	}
 
 	StackNode* node = malloc(sizeof(StackNode));
 
 	if (!node) {
-		error_memory_allocation("Couldn't allocate memory for new stack item");
+		error_memory_allocation("Couldn't allocate memory for new stack item", "stack_push()");
 		return false;
 	}
 
@@ -61,7 +61,7 @@ bool stack_push(Stack* stack, void* item) {
 
 void* stack_pop(Stack* stack) {
 	if (!stack) {
-		error_memory_not_allocated("Stack is not initialized");
+		error_null_pointer("Stack is not initialized", "stack_pop()");
 		return NULL;
 	}
 	if (!stack->top) {
@@ -79,11 +79,11 @@ void* stack_pop(Stack* stack) {
 
 void* stack_peek(Stack* stack) {
 	if (!stack) {
-		error_memory_not_allocated("Stack is not initialized");
+		error_null_pointer("Stack is not initialized", "stack_peek()");
 		return NULL;
 	}
 	else if (!stack->top) {
-		error_memory_not_allocated("Stack is empty");
+		error_null_pointer("First stack element is not initialized", "stack_peek()");
 		return NULL;
 	}
 
@@ -92,11 +92,11 @@ void* stack_peek(Stack* stack) {
 
 void* stack_get_at_depth(Stack* stack, const int depth) {
 	if (!stack) {
-		error_memory_not_allocated("Stack is not initialized");
+		error_null_pointer("Stack is not initialized", "stack_get_at_depth()");
 		return NULL;
 	}
 	else if (!stack->top) {
-		error_memory_not_allocated("Stack is empty");
+		error_null_pointer("First stack element is not initialized", "stack_get_at_depth()");
 		return NULL;
 	}
 
@@ -118,15 +118,15 @@ void* stack_find(
 	void* criteria
 ) {
 	if (!stack) {
-		error_memory_not_allocated("Stack is not initialized");
+		error_null_pointer("Stack is not initialized", "stack_find()");
 		return NULL;
 	}
 	else if (!stack->top) {
-		error_memory_not_allocated("Stack is empty");
+		error_null_pointer("Stack is empty", "stack_find()");
 		return NULL;
 	}
 	else if (!compare) {
-		error_memory_not_allocated("Compare function is not initialized");
+		error_null_pointer("Compare function is not initialized", "stack_find()");
 		return NULL;
 	}
 
@@ -146,35 +146,35 @@ bool stack_save_to_file(
 	size_t(*serialize)(void* item, FILE* file)
 ) {
 	if (!stack) {
-		error_memory_not_allocated("Stack is not initialized");
+		error_null_pointer("Stack is not initialized", "stack_save_to_file()");
 		return false;
 	}
 	if (!filename) {
-		error_memory_not_allocated("File name is not initialized");
+		error_null_pointer("File name is not initialized", "stack_save_to_file()");
 		return false;
 	}
 	if (!serialize) {
-		error_memory_not_allocated("Serialize function is not initialized");
+		error_null_pointer("Serialize function is not initialized", "stack_save_to_file()");
 		return false;
 	}
 
 	FILE* file = fopen(filename, "wb");
-	if (file == NULL) {
-		error_file_open("Couldn't open file. Check if file exists");
+	if (!file) {
+		error_file_open("Couldn't open file. It may not exist or be blocked by another process", "stack_save_to_file()");
 		return false;
 	}
 
 	Stack* temp_stack = stack_init(NULL);
 	if (!temp_stack) {
-		error_memory_allocation("Couldn't initialize temporary stack");
+		error_memory_allocation("Couldn't initialize temporary stack", "stack_save_to_file()");
 		fclose(file);
 		return false;
 	}
 
 	StackNode* current = stack->top;
 	while (current) {
-		if (!stack_push(temp_stack, current->item)) { // Error checking
-			error_memory_allocation("Couldn't push item to temporary stack");
+		if (!stack_push(temp_stack, current->item)) {
+			error_memory_allocation("Couldn't push item to temporary stack", "stack_save_to_file()");
 			stack_destroy(temp_stack);
 			fclose(file);
 			return false;
@@ -188,7 +188,7 @@ bool stack_save_to_file(
 		if (bytes_written == 0) {
 			fclose(file);
 			stack_destroy(temp_stack);
-			error_memory_allocation("Serialization failed");
+			error_memory_allocation("Serialization failed", "stack_save_to_file()");
 			return false;
 		}
 	}
@@ -204,23 +204,28 @@ bool stack_load_from_file(
 	void* (*deserialize)(FILE* file)
 ) {
 	if (!stack) {
-		error_memory_not_allocated("Stack is not initialized");
+		error_null_pointer("Stack is not initialized", "stack_load_from_file()");
 		return false;
 	}
 	if (!filename) {
-		error_memory_not_allocated("File name is not initialized");
+		error_null_pointer("Filename is not initialized", "stack_load_from_file()");
 		return false;
 	}
 	if (!deserialize) {
-		error_memory_not_allocated("Deserialize function is not initialized");
+		error_null_pointer("Deserialize function is not initialized", "stack_load_from_file()");
 		return false;
 	}
 
 	FILE* file = fopen(filename, "rb");
 	if (!file) {
-		error_file_open("Couldn't open file. Check if file exists");
+		error_file_open("Couldn't open file. It may not exist or be blocked by another process", "stack_load_from_file()");
 		return false;
 	}
+	if (file_is_empty(file)) {
+		error_file_empty("File is empty, can't load data from it", "stack_load_from_file()");
+		return false;
+	}
+
 
 	stack_clear(stack);
 
@@ -237,4 +242,16 @@ bool stack_load_from_file(
 
 	fclose(file);
 	return true;
+}
+
+static bool file_is_empty(FILE* file) {
+	if (file == NULL) {
+		return true;
+	}
+
+	fseek(file, 0, SEEK_END);
+	long size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	return (size == 0);
 }

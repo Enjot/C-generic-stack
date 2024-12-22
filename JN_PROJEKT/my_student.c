@@ -1,6 +1,5 @@
-#include <stdlib.h>
-#include <string.h>
 #include "my_student.h"
+#include "handler_error.h"
 
 
 MyStudent* student_create(
@@ -8,23 +7,25 @@ MyStudent* student_create(
 	int birth_year,
 	FieldOfStudy field_of_study
 ) {
+	if (!surname) {
+		error_null_pointer("No surname provided", "student_create()");
+		return NULL;
+	}
 
 	MyStudent* student = malloc(sizeof(MyStudent));
 	if (!student) {
-		exit(EXIT_FAILURE); // TODO
+		error_memory_allocation("Couldn't allocate memory for student", "student_create()");
+		return NULL;
 	}
 
-	if (surname) {
-		size_t surname_length = strlen(surname);
-		student->surname = malloc(sizeof(char) * surname_length + 1);
-		if (!student->surname) {
-			exit(EXIT_FAILURE); // TODO error handling
-		}
-		strcpy_s(student->surname, surname_length + 1, surname);
+	size_t surname_length = strlen(surname);
+	student->surname = malloc(sizeof(char) * surname_length + 1);
+	if (!student->surname) {
+		error_memory_allocation("Couldn't allocate memory for student's surname", "student_create()");
+		return NULL;
 	}
-	else {
-		exit(EXIT_FAILURE); // TODO
-	}
+
+	strcpy_s(student->surname, surname_length + 1, surname);
 
 	student->birth_year = birth_year;
 	student->field_of_study = field_of_study;
@@ -41,34 +42,57 @@ void student_free(MyStudent* student) {
 	}
 }
 
-size_t student_serialize(void* item, FILE* file) {
-	
-	if (!item || !file) return 0; // TODO
+bool student_serialize(void* item, FILE* file) {
+
+	if (!item) {
+		error_null_pointer("Student is not initialized", "student_serialize()");
+		return false;
+	}
+	if (!file) {
+		error_null_pointer("File is not initialized", "student_serialize()");
+		return false;
+	}
 
 	MyStudent* student = (MyStudent*)item;
 
 	size_t surname_length = student->surname ? strlen(student->surname) : 0;
 
-	if (fwrite(&surname_length, sizeof(size_t), 1, file) != 1) return 0;
-
-	if (surname_length > 0) {
-		if (fwrite(student->surname, sizeof(char), surname_length, file) != surname_length) return 0;
+	if (fwrite(&surname_length, sizeof(size_t), 1, file) != 1) {
+		error_file_write("Couldn't write surname length to file", "student_serialize()");
+		return false;
 	}
 
-	if (fwrite(&student->birth_year, sizeof(int), 1, file) != 1) return 0;
+	if (surname_length > 0) {
+		if (fwrite(student->surname, sizeof(char), surname_length, file) != surname_length) {
+			error_file_write("Couldn't write surname to file", "student_serialize()");
+			return false;
+		};
+	}
 
-	if (fwrite(&student->field_of_study, sizeof(FieldOfStudy), 1, file) != 1) return 0;
+	if (fwrite(&student->birth_year, sizeof(int), 1, file) != 1) {
+		error_file_write("Couldn't write year of birth to file", "student_serialize()");
+		return false;
+	}
 
-	return 1;
+	if (fwrite(&student->field_of_study, sizeof(FieldOfStudy), 1, file) != 1) {
+		error_file_write("Couldn't write field of study to file", "student_serialize()");
+		return false;
+	}
+
+	return true;
 }
 
 void* student_deserialize(FILE* file) {
-	if (!file) return NULL; // TODO
+	if (!file) {
+		error_null_pointer("File is not initialized", "student_deserialize()");
+		return NULL;
+	}
 
 	size_t surname_length;
 
-	
-	if (fread(&surname_length, sizeof(size_t), 1, file) != 1) return NULL;
+	if (fread(&surname_length, sizeof(size_t), 1, file) != 1) {
+		return NULL;
+	}
 
 	char* surname = NULL;
 	if (surname_length > 0) {
@@ -88,14 +112,13 @@ void* student_deserialize(FILE* file) {
 	if (fread(&birth_year, sizeof(int), 1, file) != 1) {
 		if (surname) free(surname);
 		return NULL;
-		//exit(EXIT_FAILURE);
 	}
 
 	int field_int;
 	if (fread(&field_int, sizeof(int), 1, file) != 1) {
 		if (surname) free(surname);
+		error_memory_allocation("Couldn't read field of study", "student_deserialize()");
 		return NULL;
-		//exit(EXIT_FAILURE);
 	}
 
 	FieldOfStudy field_of_study = (FieldOfStudy)field_int;

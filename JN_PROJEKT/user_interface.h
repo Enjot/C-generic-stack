@@ -1,6 +1,11 @@
 #pragma once
-#include "stack.h"
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "my_student.h"
+#include "stack.h"
 
 typedef enum MenuEvent {
 	MAIN_MENU = 0,

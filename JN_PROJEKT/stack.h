@@ -1,7 +1,8 @@
 #pragma once
 
 #include <stdio.h>
-#include "stdbool.h"
+#include <stdbool.h>
+#include <string.h>
 
 typedef struct StackNode {
     void* item;
@@ -39,3 +40,5 @@ bool stack_load_from_file(
 	const char* filename,
 	void* (*deserialize)(FILE* file)
 );
+
+static bool file_is_empty(FILE* file);

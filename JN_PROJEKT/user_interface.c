@@ -1,10 +1,5 @@
-#include <stdbool.h>
 #include "user_interface.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "stack.h"
-#include "my_student.h">
-#include <string.h>
 #include "util.h"
 #include "handler_error.h"
 #include "handler_message.h"
@@ -19,6 +14,7 @@ void ui_run_menu() {
 		ui_print_menu();
 		unsigned short selected_state;
 		scanf_s("%hu", &selected_state);
+		while (getchar() != '\n') {};
 		ui_on_event(&event, selected_state);
 		util_clear_screen();
 		switch (event) {
@@ -78,7 +74,7 @@ static void ui_print_stack(Stack* stack) {
 
 static void ui_print_top(Stack* stack) {
 	if (!stack) {
-		error_memory_allocation("Stack is not initialized");
+		error_memory_allocation("Stack is not initialized", "ui_print_top()");
 		return;
 	}
 	if (stack->top == NULL) {
@@ -94,7 +90,7 @@ static void ui_print_top(Stack* stack) {
 
 static void ui_print_at_depth(Stack* stack) {
 	if (!stack) {
-		error_memory_allocation("Stack is not initialized");
+		error_memory_allocation("Stack is not initialized", "ui_print_at_depth()");
 		return;
 	}
 	if (stack->top == NULL) {
@@ -104,6 +100,7 @@ static void ui_print_at_depth(Stack* stack) {
 	int depth = 1;
 	printf("Enter depth (starting at 1): ");
 	scanf_s("%d", &depth);
+	while (getchar() != '\n') {};
 	void* item = stack_get_at_depth(stack, depth);
 	if (!item) {
 		message_generic("Depth exceeds stack size");
@@ -125,14 +122,16 @@ static void ui_push_to_stack(Stack* stack) {
 	printf("ADDING STUDENT TO STACK\n");
 	printf("Enter surname: ");
 	scanf_s("%s", surname, 256);
+	while (getchar() != '\n') {};
 	util_clear_screen();
 	printf("Enter year of birth: ");
 	scanf_s("%d", &birth_year);
+	while (getchar() != '\n') {};
 	util_clear_screen();
 	student_print_fields_of_study();
 	printf("Choose field of study: ");
 	scanf_s("%d", &field_of_study);
-
+	while (getchar() != '\n') {};
 	MyStudent* student = student_create(surname, birth_year, field_of_study);
 
 	stack_push(stack, student);
@@ -169,12 +168,18 @@ static void ui_save_stack(Stack* stack) {
 }
 
 static void ui_load_stack(Stack* stack) {
-	stack_load_from_file(
+	bool result = stack_load_from_file(
 		stack,
 		"backup.bin",
 		student_deserialize
 	);
-	message_generic("Stack loaded successfully");
+	if (result) {
+		message_generic("Stack loaded successfully");
+	}
+	else {
+		message_generic("Couldn't load students from file");
+	}
+	
 }
 
 static void ui_on_event(

@@ -1,6 +1,4 @@
-﻿#include <stdlib.h>
-#include <stdio.h>
-#include "user_interface.h"
+﻿#include "user_interface.h"
 #include "stack.h"
 #include "unit_test.h"
 
