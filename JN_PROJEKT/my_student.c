@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "my_student.h"
 #include "handler_error.h"
 
@@ -22,6 +24,7 @@ MyStudent* student_create(
 	student->surname = malloc(sizeof(char) * surname_length + 1);
 	if (!student->surname) {
 		error_memory_allocation("Couldn't allocate memory for student's surname", "student_create()");
+		free(student);
 		return NULL;
 	}
 
@@ -132,11 +135,6 @@ void* student_deserialize(FILE* file) {
 	return student;
 }
 
-void student_print(MyStudent* student) {
-	char* field_of_study = student_formatted_field_of_study(student->field_of_study);
-	printf("%-25s| %-15d| %s\n", student->surname, student->birth_year, field_of_study);
-}
-
 static char* student_formatted_field_of_study(FieldOfStudy field_of_study) {
 	switch (field_of_study) {
 	case COMPUTER_SCIENCE:
@@ -153,9 +151,16 @@ static char* student_formatted_field_of_study(FieldOfStudy field_of_study) {
 		return "Physics";
 	case PHILOSOPHY:
 		return "Philosophy";
+	case MECHANICS:
+		return "Mechanics";
 	default:
-		exit(EXIT_FAILURE);
+		return NULL;
 	}
+}
+
+void student_print(MyStudent* student) {
+	char* field_of_study = student_formatted_field_of_study(student->field_of_study);
+	printf("%-25s| %-15d| %s\n", student->surname, student->birth_year, field_of_study);
 }
 
 void student_print_fields_of_study() {

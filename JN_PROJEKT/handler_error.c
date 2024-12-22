@@ -1,7 +1,11 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "handler_error.h"
+#include "util.h"
+
 
 void error_file_not_found(const char* message, const char* source) {
-	printf("\n* OPENING FILE ERROR!\n");
+	printf("\n* FILE NOT FOUND ERROR!\n");
 	printf("Source: %s\n", source);
 	printf("Message: %s\n", message);
 	util_press_any_key_to_continue();

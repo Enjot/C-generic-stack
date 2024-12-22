@@ -1,23 +1,18 @@
 #pragma once
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "my_student.h"
-#include "stack.h"
 
 typedef enum MenuEvent {
-	MAIN_MENU = 0,
+	MAIN_MENU = 99,
 	PRINT_STACK = 1,
 	PRINT_TOP = 2,
 	PRINT_AT_DEPTH = 3,
-	PUSH_TO_STACK = 4,
-	POP_FROM_STACK = 5,
-	CLEAR_STACK = 6,
-	SAVE_TO_DISK = 7,
-	LOAD_FROM_DISK = 8,
-	EXIT = 9
+	FIND_ELEMENT = 4,
+	PUSH_TO_STACK = 5,
+	POP_FROM_STACK = 6,
+	CLEAR_STACK = 7,
+	SAVE_TO_DISK = 8,
+	LOAD_FROM_DISK = 9,
+	EXIT = 0
 } MenuEvent;
 
 void ui_run_menu();

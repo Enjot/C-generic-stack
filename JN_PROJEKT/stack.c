@@ -2,8 +2,10 @@
 #include "stdlib.h"
 #include "handler_error.h"
 #include "handler_message.h"
-#include <sys/stat.h>
 #include <errno.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
 
 Stack* stack_init(void (*destroy_item)(void* item)) {
 	Stack* stack = malloc(sizeof(Stack));
@@ -197,6 +199,18 @@ bool stack_save_to_file(
 	return true;
 }
 
+static bool file_is_empty(FILE* file) {
+	if (file == NULL) {
+		return true;
+	}
+
+	fseek(file, 0, SEEK_END);
+	long size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	return (size == 0);
+}
+
 bool stack_load_from_file(
 	Stack* stack,
 	const char* filename,
@@ -222,6 +236,7 @@ bool stack_load_from_file(
 	}
 	if (file_is_empty(file)) {
 		error_file_empty("File is empty, can't load data from it", "stack_load_from_file()");
+		fclose(file);
 		return false;
 	}
 
@@ -241,16 +256,4 @@ bool stack_load_from_file(
 
 	fclose(file);
 	return true;
-}
-
-static bool file_is_empty(FILE* file) {
-	if (file == NULL) {
-		return true;
-	}
-
-	fseek(file, 0, SEEK_END);
-	long size = ftell(file);
-	fseek(file, 0, SEEK_SET);
-
-	return (size == 0);
 }

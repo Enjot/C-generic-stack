@@ -1,8 +1,7 @@
 #pragma once
-
-#include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
+#include <stdio.h>
+
 
 typedef struct StackNode {
     void* item;
@@ -11,7 +10,7 @@ typedef struct StackNode {
 
 typedef struct  {
     struct StackNode* top;
-	void(*destroy_item)(void* item);
+	void (*destroy_item)(void* item);
 } Stack;
 
 Stack* stack_init(void (*destroy_item)(void* item));
