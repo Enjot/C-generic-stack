@@ -2,19 +2,51 @@
 #include "stdlib.h"
 #include <stdbool.h>
 #include <string.h>
-#include "error_handler.h"
+#include "handler_error.h"
+#include "handler_message.h"
 
-Stack stack_initialize() {
-	Stack stack = { NULL };
+Stack* stack_init(void (*destroy_item)(void* item)) {
+	Stack* stack = malloc(sizeof(Stack));
+	if (!stack) {
+		error_memory_allocation("Couldn't allocate memory for stack");
+		return NULL;
+	}
+
+	stack->top = NULL;
+	stack->destroy_item = destroy_item;
+
 	return stack;
 }
 
+void stack_destroy(Stack* stack) {
+	if (stack) {
+		stack_clear(stack);
+		free(stack);
+	}
+}
+
+void stack_clear(Stack* stack) {
+	if (!stack) {
+		error_memory_not_allocated("Stack is not initialized");
+		return;
+	}
+
+	void* item;
+	while ((item = stack_pop(stack)) != NULL) {
+		stack->destroy_item(item);
+	}
+}
+
 bool stack_push(Stack* stack, void* item) {
+	if (!stack) {
+		error_memory_not_allocated("Stack is not initialized");
+		return false;
+	}
 
 	StackNode* node = malloc(sizeof(StackNode));
 
 	if (!node) {
-		// TODO replace with error handling function
+		error_memory_allocation("Couldn't allocate memory for new stack item");
 		return false;
 	}
 
@@ -24,40 +56,89 @@ bool stack_push(Stack* stack, void* item) {
 	return true;
 }
 
-bool stack_pop(Stack* stack) {
-
-	StackNode* old_top = stack->top;
-	StackNode* new_top = stack->top->next;
-
-	free(old_top);
-	old_top = NULL;
-	stack->top = new_top;
-	return true;
-}
-
-void* stack_top(Stack stack) {
-	return stack.top;
-}
-
-void stack_clear(Stack* stack) {
-	while (stack->top != NULL) {
-		stack_pop(stack);
+void* stack_pop(Stack* stack) {
+	if (!stack) {
+		error_memory_not_allocated("Stack is not initialized");
+		return NULL;
 	}
+	if (!stack->top) {
+		error_memory_not_allocated("Stack is empty");
+		return NULL;
+	}
+
+	StackNode* top_node = stack->top;
+	void* top_item = top_node->item;
+	stack->top = top_node->next;
+
+	free(top_node);
+
+	return top_item;
 }
 
-void* stack_get(Stack stack, const int depth) {
+void* stack_peek(Stack* stack) {
+	if (!stack) {
+		error_memory_not_allocated("Stack is not initialized");
+		return NULL;
+	}
+	else if (!stack->top) {
+		error_memory_not_allocated("Stack is empty");
+		return NULL;
+	}
+
+	return stack->top->item;
+}
+
+void* stack_get_at_depth(Stack* stack, const int depth) {
+	if (!stack) {
+		error_memory_not_allocated("Stack is not initialized");
+		return NULL;
+	}
+	else if (!stack->top) {
+		error_memory_not_allocated("Stack is empty");
+		return NULL;
+	}
 
 	int counter = 1;
-
-	while (stack.top != NULL) {
+	StackNode* current = stack->top;
+	while (current) {
 		if (counter == depth) {
-			return stack.top->item;
+			return current->item;
 			break;
 		}
-		StackNode* new_top = stack.top->next;
-		stack.top = new_top;
+		current = current->next;
 		counter++;
 	}
+
+	error_memory_not_allocated("Depth exceeds stack size");
+	return NULL;
+}
+
+void* stack_find(
+	Stack* stack,
+	bool (*compare) (void* item, void* criteria),
+	void* criteria
+) {
+	if (!stack) {
+		error_memory_not_allocated("Stack is not initialized");
+		return NULL;
+	}
+	else if (!stack->top) {
+		error_memory_not_allocated("Stack is empty");
+		return NULL;
+	}
+	else if (!compare) {
+		error_memory_not_allocated("Compare function is not initialized");
+		return NULL;
+	}
+
+	StackNode* current = stack->top;
+	while (current) {
+		if (compare(current->item, criteria)) {
+			return current->item;
+		}
+		current = current->next;
+	}
+	return NULL;
 }
 
 bool stack_save_to_file(
@@ -65,60 +146,89 @@ bool stack_save_to_file(
 	const char* filename,
 	size_t(*serialize)(void* item, FILE* file)
 ) {
-	if (!stack || !filename || !serialize) return false; // TODO
-
-	FILE* file = fopen(filename, "wb");
-	if (file == NULL) error_open_file();
-
-	StackNode* current_node = stack->top;
-	while (current_node) {
-		if (serialize(current_node->item, file) == 0) {
-			fclose(file);
-			return false;
-		}
-		current_node = current_node->next;
+	if (!stack) {
+		error_memory_not_allocated("Stack is not initialized");
+		return false;
+	}
+	if (!filename) {
+		error_memory_not_allocated("File name is not initialized");
+		return false;
+	}
+	if (!serialize) {
+		error_memory_not_allocated("Serialize function is not initialized");
+		return false;
 	}
 
+	FILE* file = fopen(filename, "wb");
+	if (file == NULL) {
+		error_file_open("Couldn't open file. Check if file exists");
+		return false;
+	}
+
+	Stack* temp_stack = stack_init(NULL);
+	if (!temp_stack) {
+		error_memory_allocation("Couldn't initialize temporary stack");
+		fclose(file);
+		return false;
+	}
+
+	StackNode* current = stack->top;
+	while (current) {
+		stack_push(temp_stack, current->item);
+		current = current->next;
+	}
+
+	void* item;
+	while ((item = stack_pop(temp_stack)) != NULL) {
+		size_t bytes_written = serialize(item, file);
+		if (bytes_written == 0) {
+			fclose(file);
+			stack_destroy(temp_stack);
+			error_memory_allocation("Serialization failed");
+			return false;
+		}
+	}
+
+	stack_destroy(temp_stack);
 	fclose(file);
 	return true;
 }
 
-void stack_load_from_file(
+bool stack_load_from_file(
 	Stack* stack,
 	const char* filename,
 	void* (*deserialize)(FILE* file)
 ) {
-	//if (!stack || !filename || !deserialize) exit(EXIT_FAILURE); // TODO
+	if (!stack) {
+		error_memory_not_allocated("Stack is not initialized");
+		return false;
+	}
+	if (!filename) {
+		error_memory_not_allocated("File name is not initialized");
+		return false;
+	}
+	if (!deserialize) {
+		error_memory_not_allocated("Deserialize function is not initialized");
+		return false;
+	}
 
 	FILE* file = fopen(filename, "rb");
-	//if (file == NULL) exit(EXIT_FAILURE); // TODO
+	if (!file) {
+		error_file_open("Couldn't open file. Check if file exists");
+		return false;
+	}
 
-	Stack temp_stack = stack_initialize();
-
-	while (!feof(file)) {
-		void* item = deserialize(file);
-		if (item) {
-			if (!stack_push(&temp_stack, item)) {
-				// TODO
-				// Jeœli push siê nie powiedzie, zwalniamy dane
-				/*if (stack->destroy) {
-					stack->destroy(data);
-				}*/
-				fclose(file);
-				//exit(EXIT_FAILURE);
-				return false;
+	void* item;
+	while ((item = deserialize(file)) != NULL) {
+		if (!stack_push(stack, item)) {
+			if (stack->destroy_item) {
+				stack->destroy_item(item);
 			}
-			
+			fclose(file);
+			return false;
 		}
 	}
 
 	fclose(file);
-
-	//stack_free(stack);
-
-	while (temp_stack.top != NULL) {
-		void* item = temp_stack.top->item;
-		stack_push(stack, item);
-		stack_pop(&temp_stack);
-	}
+	return true;
 }

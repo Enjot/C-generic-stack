@@ -10,23 +10,31 @@ typedef struct StackNode {
 
 typedef struct  {
     struct StackNode* top;
+	void(*destroy_item)(void* item);
 } Stack;
 
-Stack stack_initialize();
-
-bool stack_push(Stack* stack, void* item);
-bool stack_pop(Stack* stack);
+Stack* stack_init(void (*destroy_item)(void* item));
+void stack_destroy(Stack* stack);
 void stack_clear(Stack* stack);
 
-void* stack_top(Stack stack);
-void* stack_get(Stack stack, const int depth);
+bool stack_push(Stack* stack, void* item);
+void* stack_pop(Stack* stack);
 
-void stack_save_to_file(
+void* stack_peek(Stack* stack);
+void* stack_get_at_depth(Stack* stack, const int depth);
+
+void* stack_find(
+	Stack* stack,
+	bool (*compare)(void* item, void* criteria),
+	void* criteria
+);
+
+bool stack_save_to_file(
 	Stack* stack,
 	const char* filename,
 	size_t(*serialize)(void* item, FILE* file)
 );
-void stack_load_from_file(
+bool stack_load_from_file(
 	Stack* stack,
 	const char* filename,
 	void* (*deserialize)(FILE* file)

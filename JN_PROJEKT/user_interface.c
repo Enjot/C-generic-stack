@@ -9,7 +9,7 @@
 
 void ui_run_menu() {
 
-	Stack stack = stack_initialize();
+	Stack stack = stack_init();
 
 	MenuEvent event = MAIN_MENU;
 
@@ -92,7 +92,7 @@ static void ui_print_at_depth(Stack stack) {
 	int depth = 1;
 	printf("Enter depth: ");
 	scanf_s("%d", &depth);
-	void* item = stack_get(stack, depth);
+	void* item = stack_get_at_depth(stack, depth);
 	util_clear_screen();
 	student_print_header();
 	student_print(item);
