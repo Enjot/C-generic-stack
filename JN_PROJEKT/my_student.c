@@ -124,16 +124,20 @@ void* student_deserialize(FILE* file) {
 	FieldOfStudy field_of_study = (FieldOfStudy)field_int;
 
 	MyStudent* student = student_create(surname, birth_year, field_of_study);
+	if (!student) {
+		if (surname) free(surname);
+		return NULL;
+	}
 
 	return student;
 }
 
 void student_print(MyStudent* student) {
 	char* field_of_study = student_formatted_field_of_study(student->field_of_study);
-	printf("%-25s| %-15d%| %s\n", student->surname, student->birth_year, field_of_study);
+	printf("%-25s| %-15d| %s\n", student->surname, student->birth_year, field_of_study);
 }
 
-char* student_formatted_field_of_study(FieldOfStudy field_of_study) {
+static char* student_formatted_field_of_study(FieldOfStudy field_of_study) {
 	switch (field_of_study) {
 	case COMPUTER_SCIENCE:
 		return "Computer Science";
@@ -169,6 +173,6 @@ void student_print_fields_of_study() {
 }
 
 void student_print_header() {
-	printf("%-25s| %-15s%| %s\n", "SURNAME", "BIRTH YEAR", "FIELD OF STUDY");
+	printf("%-25s| %-15s| %s\n", "SURNAME", "BIRTH YEAR", "FIELD OF STUDY");
 	printf("----------------------------------------------------------\n");
 }

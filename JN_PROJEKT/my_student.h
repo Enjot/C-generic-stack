@@ -31,6 +31,5 @@ void* student_deserialize(FILE* file);
 
 // UI related
 void student_print(MyStudent* student);
-char* student_formatted_field_of_study(FieldOfStudy field_of_study);
 void student_print_fields_of_study();
 void student_print_header();

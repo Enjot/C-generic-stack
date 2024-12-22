@@ -1,5 +1,4 @@
-#include <stdlib.h>
-#include "util.h"
+#include "handler_message.h"
 
 void message_generic(char* message) {
 	printf("%s\n", message);

@@ -33,12 +33,10 @@ void* stack_find(
 bool stack_save_to_file(
 	Stack* stack,
 	const char* filename,
-	size_t(*serialize)(void* item, FILE* file)
+	bool(*serialize)(void* item, FILE* file)
 );
 bool stack_load_from_file(
 	Stack* stack,
 	const char* filename,
 	void* (*deserialize)(FILE* file)
 );
-
-static bool file_is_empty(FILE* file);

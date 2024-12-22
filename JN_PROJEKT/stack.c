@@ -143,7 +143,7 @@ void* stack_find(
 bool stack_save_to_file(
 	Stack* stack,
 	const char* filename,
-	size_t(*serialize)(void* item, FILE* file)
+	bool(*serialize)(void* item, FILE* file)
 ) {
 	if (!stack) {
 		error_null_pointer("Stack is not initialized", "stack_save_to_file()");
@@ -184,8 +184,7 @@ bool stack_save_to_file(
 
 	void* item;
 	while ((item = stack_pop(temp_stack)) != NULL) {
-		size_t bytes_written = serialize(item, file);
-		if (bytes_written == 0) {
+		if (!serialize(item, file)) {
 			fclose(file);
 			stack_destroy(temp_stack);
 			error_memory_allocation("Serialization failed", "stack_save_to_file()");

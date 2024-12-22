@@ -121,7 +121,7 @@ static void ui_push_to_stack(Stack* stack) {
 	util_clear_screen();
 	printf("ADDING STUDENT TO STACK\n");
 	printf("Enter surname: ");
-	scanf_s("%s", surname, 256);
+	scanf_s("%255s", surname, (unsigned)_countof(surname) != 1);
 	while (getchar() != '\n') {};
 	util_clear_screen();
 	printf("Enter year of birth: ");
