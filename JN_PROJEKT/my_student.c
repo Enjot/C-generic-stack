@@ -131,7 +131,6 @@ void* student_deserialize(FILE* file) {
 		if (surname) free(surname);
 		return NULL;
 	}
-
 	return student;
 }
 
