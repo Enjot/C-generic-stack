@@ -101,12 +101,15 @@ void* stack_get_at_depth(Stack* stack, const int depth) {
 		error_null_pointer("First stack element is not initialized", "stack_get_at_depth()");
 		return NULL;
 	}
+	else if (depth <= 0) {
+		error_invalid_argument("Depth must be greater than 0", "stack_get_at_depth()");
+		return NULL;
+	}
 
 	int counter = 1;
 	StackNode* current = stack->top;
 	while (current) {
 		if (counter == depth) return current->item;
-	
 		current = current->next;
 		counter++;
 	}

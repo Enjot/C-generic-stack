@@ -52,3 +52,10 @@ void error_memory_allocation(const char* message, const char* source) {
 	printf("Message: %s\n", message);
 	util_press_any_key_to_continue();
 }
+
+void error_invalid_argument(const char* message, const char* source) {
+	printf("\n* INVALID ARGUMENT ERROR!\n");
+	printf("Source: %s\n", source);
+	printf("Message: %s\n", message);
+	util_press_any_key_to_continue();
+}

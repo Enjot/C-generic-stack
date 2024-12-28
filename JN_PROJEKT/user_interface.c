@@ -58,7 +58,7 @@ static void ui_print_at_depth(Stack* stack) {
 	while (getchar() != '\n') {};
 	void* item = stack_get_at_depth(stack, depth);
 	if (!item) {
-		message_generic("Depth exceeds stack size");
+		message_generic("Couldn't find any student at given depth");
 		return;
 	}
 	util_clear_screen();
@@ -223,10 +223,13 @@ static bool compare_student_surname(void* item, void* criteria) {
 }
 
 static void ui_find_in_stack(Stack* stack) {
-	char target_surname[256];
+	if (stack->top == NULL) {
+		message_generic("Stack is empty");
+		return;
+	}
+	
 	printf("Enter surname to search: ");
-	scanf_s("%s", target_surname, 256);
-	while (getchar() != '\n') {};
+	char* target_surname = util_scan_user_input();
 
 	void* found_item = stack_find(stack, compare_student_surname, target_surname);
 	if (found_item) {
