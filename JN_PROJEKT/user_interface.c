@@ -69,7 +69,6 @@ static void ui_print_at_depth(Stack* stack) {
 
 static void ui_push_to_stack(Stack* stack) {
 
-	char surname[256];
 	int birth_year;
 	FieldOfStudy field_of_study;
 
@@ -77,9 +76,12 @@ static void ui_push_to_stack(Stack* stack) {
 	printf("ADDING STUDENT TO STACK\n");
 	printf("Enter surname: ");
 
-	scanf_s("%s", surname, 256);
+	char* surname = read_line();
+	if (!surname) {
+		message_generic("Failed to add surname. Push operation aborted");
+		return;
+	}
 
-	while (getchar() != '\n') {};
 	util_clear_screen();
 	printf("Enter year of birth: ");
 	scanf_s("%d", &birth_year);
