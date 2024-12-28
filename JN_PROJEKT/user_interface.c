@@ -76,7 +76,7 @@ static void ui_push_to_stack(Stack* stack) {
 	printf("ADDING STUDENT TO STACK\n");
 	printf("Enter surname: ");
 
-	char* surname = read_line();
+	char* surname = util_scan_user_input();
 	if (!surname) {
 		message_generic("Failed to add surname. Push operation aborted");
 		return;
