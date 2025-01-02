@@ -234,15 +234,18 @@ bool stack_load_from_file(
 
 	void* first_item = deserialize(file);
 	if (!first_item) {
+		fclose(file);
 		return false;
 	}
 
 	StackNode* current = malloc(sizeof(StackNode));
 	if (!current) {
+		fclose(file);
 		return false;
 	}
 
 	current->item = first_item;
+	current->next = NULL;
 
 	stack->top = current;
 
@@ -254,7 +257,7 @@ bool stack_load_from_file(
 		}
 		StackNode* node = malloc(sizeof(StackNode));
 		if (!node) {
-			free(item);
+			if (stack->destroy_item) stack->destroy_item(item);
 			break;
 		}
 
