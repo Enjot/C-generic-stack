@@ -169,35 +169,22 @@ bool stack_save_to_file(
 		return false;
 	}
 
-	Stack* temp_stack = stack_init(NULL);
-	if (!temp_stack) {
-		error_memory_allocation("Couldn't initialize temporary stack", "stack_save_to_file()");
-		fclose(file);
-		return false;
-	}
+	//SF Tu tworzy Pan drugi stos, prawdopodobnie, zeby uniknac inwersji. Jednak jednoczesnie operowac dwoma kontenerami zamiast jednego - jest to
+	//niedopuszczalna plata za unikniecie inwersji. Prosze pomyslec nad innymi rozwiazaniami, ktore by operowali tylko jedna struktura danych i mieli by 
+	//O(n) odwolan do elementow stosu przy zapisie/odczycie.
 
+	// JN wprowadzi³em zmiany do dzia³ania algorytmu, usun¹³em tworzenie drugiego stacku,
+	// teraz od razu tworzony jest stack z w³aœciw¹ kolejnoœci¹ elementów
 	StackNode* current = stack->top;
 	while (current) {
-		if (!stack_push(temp_stack, current->item)) {
-			error_memory_allocation("Couldn't push item to temporary stack", "stack_save_to_file()");
-			stack_destroy(temp_stack);
+		if (!serialize(current->item, file)) {
 			fclose(file);
+			error_memory_allocation("Serialization failed", "stack_save_to_file()");
 			return false;
 		}
 		current = current->next;
 	}
 
-	void* item;
-	while ((item = stack_pop(temp_stack)) != NULL) {
-		if (!serialize(item, file)) {
-			fclose(file);
-			stack_destroy(temp_stack);
-			error_memory_allocation("Serialization failed", "stack_save_to_file()");
-			return false;
-		}
-	}
-
-	stack_destroy(temp_stack);
 	fclose(file);
 	return true;
 }
@@ -245,16 +232,36 @@ bool stack_load_from_file(
 
 	stack_clear(stack);
 
-	void* item;
-	while ((item = deserialize(file)) != NULL) {
-		if (!stack_push(stack, item)) {
-			if (stack->destroy_item) {
-				stack->destroy_item(item);
-			}
-			fclose(file);
-			stack_clear(stack);
-			return false;
+	void* first_item = deserialize(file);
+	if (!first_item) {
+		return false;
+	}
+
+	StackNode* current = malloc(sizeof(StackNode));
+	if (!current) {
+		return false;
+	}
+
+	current->item = first_item;
+
+	stack->top = current;
+
+	while (true) {
+
+		void* item = deserialize(file);
+		if (!item) {
+			break;
 		}
+		StackNode* node = malloc(sizeof(StackNode));
+		if (!node) {
+			free(item);
+			break;
+		}
+
+		node->item = item;
+		node->next = NULL;
+		current->next = node;
+		current = node;
 	}
 
 	fclose(file);

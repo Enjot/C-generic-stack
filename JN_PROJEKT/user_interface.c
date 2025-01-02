@@ -222,6 +222,7 @@ static bool compare_student_surname(void* item, void* criteria) {
 	return strcmp(student->surname, target_surname) == 0;
 }
 
+//SF Ten algorytm znajduje tylko pierwsze wystapienie poszukiwanego obiektu, a innych wystapien - nie.
 static void ui_find_in_stack(Stack* stack) {
 	if (stack->top == NULL) {
 		message_generic("Stack is empty");

@@ -3,6 +3,9 @@
 #include "handler_error.h"
 #include "util.h"
 
+//SF Zadna z funkcji obslugi bladow i komunikatow nie zwalnia zasobow aplikacji w przypadku awaryjnego zakonczenia zadania.
+//Oznacza to, ze albo zasoby nie beda zwolnione przez kod aplikacji, albo Pan po raz kazdy powinien pisac linii kodu po zwolnieniu zasobow przed
+//wywolaniem tych funkcji.
 
 void error_file_not_found(const char* message, const char* source) {
 	printf("\n* FILE NOT FOUND ERROR!\n");
