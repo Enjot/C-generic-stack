@@ -1,41 +1,46 @@
 #pragma once
 #include <stdbool.h>
 #include <stdio.h>
+#include "util.h"
+
+typedef struct STACK_NODE {
+    void *item;
+    struct STACK_NODE *next;
+} STACK_NODE;
+
+typedef struct STACK {
+    STACK_NODE *top;
+
+    void (*destroy_item)(void *item);
+} STACK;
 
 
-typedef struct StackNode {
-    void* item;
-    struct StackNode* next;
-} StackNode;
+extern STACK *stack;
+extern const char *filename;
+extern FILE* file;
 
-typedef struct  {
-    struct StackNode* top;
-	void (*destroy_item)(void* item);
-} Stack;
+STACK *stack_init(void (*destroy_item)(void *item));
 
-Stack* stack_init(void (*destroy_item)(void* item));
-void stack_destroy(Stack* stack);
-bool stack_clear(Stack* stack);
+void stack_destroy();
 
-bool stack_push(Stack* stack, void* item);
-void* stack_pop(Stack* stack);
+RESULT stack_clear();
 
-void* stack_peek(Stack* stack);
-void* stack_get_at_depth(Stack* stack, const int depth);
+RESULT stack_push(void *item);
 
-void* stack_find(
-	Stack* stack,
-	bool (*compare)(void* item, void* criteria),
-	void* criteria
+void *stack_pop();
+
+void *stack_peek();
+
+void *stack_get_at_depth(int depth);
+
+void **stack_find_all(
+    bool (*compare)(void *item, void *criteria),
+    void *criteria,
+    size_t *out_count
 );
 
-bool stack_save_to_file(
-	Stack* stack,
-	const char* filename,
-	bool(*serialize)(void* item, FILE* file)
-);
-bool stack_load_from_file(
-	Stack* stack,
-	const char* filename,
-	void* (*deserialize)(FILE* file)
-);
+RESULT stack_save_to_file(RESULT (*serialize)(void *item, FILE *file));
+
+RESULT stack_load_from_file(void * (*deserialize)(FILE *file));
+
+bool stack_is_empty();

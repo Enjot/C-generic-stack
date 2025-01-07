@@ -127,17 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="handler_error.c" />
-    <ClCompile Include="handler_message.c" />
+    <ClCompile Include="..\..\..\CLionProjects\untitled1\handler.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="message.c" />
     <ClCompile Include="my_student.c" />
     <ClCompile Include="stack.c" />
     <ClCompile Include="user_interface.c" />
     <ClCompile Include="util.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="handler_error.h" />
-    <ClInclude Include="handler_message.h" />
+    <ClInclude Include="..\..\..\CLionProjects\untitled1\handler.h" />
+    <ClInclude Include="message.h" />
     <ClInclude Include="my_student.h" />
     <ClInclude Include="stack.h" />
     <ClInclude Include="user_interface.h" />

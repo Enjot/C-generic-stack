@@ -1,7 +1,16 @@
 #pragma once
-#include <stdlib.h>
-#include <stdio.h>
+
+
+// JN struktura ta wraz z biblioteką stdbool.h pomagaja szybko
+// okreslic jaki jest kontekst zwracanej wartosci
+// niz gdyby wszedzie byl zwracany typ "int"
+typedef enum {
+    SUCCESS = 0,
+    FAILURE = 1,
+} RESULT;
 
 void util_clear_screen();
-void util_press_any_key_to_continue();
-char* util_scan_user_input();
+
+void util_press_to_continue();
+
+char *util_scan_user_input();
