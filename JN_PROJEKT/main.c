@@ -10,16 +10,16 @@
 #include <crtdbg.h>
 
 int main() {
-    stack = stack_init(student_free);
+	stack = stack_init(student_free);
 
-    ui_run_stack_menu();
+	ui_run_stack_menu();
 
-    handler_free_resources();
+	handler_free_resources();
 
-    // //SF
-     if (_CrtDumpMemoryLeaks())
-         printf("LEAK OF MEMORY!!!!!!!!!!!!!\n");
+	//SF
+	if (_CrtDumpMemoryLeaks())
+		printf("LEAK OF MEMORY!!!!!!!!!!!!!\n");
 
-    util_press_to_continue();
-    return EXIT_SUCCESS;
+	util_press_to_continue();
+	return EXIT_SUCCESS;
 }
