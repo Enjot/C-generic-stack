@@ -198,17 +198,17 @@ void student_print_all(void* criteria) {
 
 }
 
-bool student_compare_surname(MY_STUDENT* student, char* surname) {
+bool student_compare_surname(const MY_STUDENT* student, char* surname) {
     if (!student || !surname) return false;
     return strcmp(student->surname, surname) == 0;
 }
 
-bool student_compare_birth_year(MY_STUDENT* student, const int birth_year) {
+bool student_compare_birth_year(const MY_STUDENT* student, const int *birth_year) {
     if (!student || !birth_year) return false;
-    return student->birth_year == birth_year;
+    return student->birth_year == *birth_year;
 }
 
-bool student_compare_field_of_study(MY_STUDENT* student, const FIELD_OF_STUDY field_of_study) {
+bool student_compare_field_of_study(const MY_STUDENT* student, const FIELD_OF_STUDY *field_of_study) {
     if (!student || !field_of_study) return false;
-    return student->field_of_study == field_of_study;
+    return student->field_of_study == *field_of_study;
 }

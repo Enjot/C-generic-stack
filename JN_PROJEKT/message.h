@@ -9,4 +9,6 @@ void message_error(
     const char *source
 );
 
+void message_debug(const char* message, const char* source);
+
 void message_info(const char *message);

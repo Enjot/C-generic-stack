@@ -40,8 +40,8 @@ void student_print_fields_of_study();
 
 void student_print_header();
 
-bool student_compare_surname(MY_STUDENT *student, char *surname);
+bool student_compare_surname(const MY_STUDENT *student, const char *surname);
 
-bool student_compare_birth_year(MY_STUDENT *student, int birth_year);
+bool student_compare_birth_year(const MY_STUDENT *student, const int *birth_year);
 
-bool student_compare_field_of_study(MY_STUDENT *student, FIELD_OF_STUDY field_of_study);
+bool student_compare_field_of_study(const MY_STUDENT *student, const FIELD_OF_STUDY *field_of_study);

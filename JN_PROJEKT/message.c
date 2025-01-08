@@ -27,6 +27,15 @@ void message_error(
     util_press_to_continue();
 }
 
+void message_debug(
+    const char* message,
+    const char* source
+) {
+    printf("Source: %s\n", source);
+    printf("Message: %s\n", message);
+    util_press_to_continue();
+}
+
 void message_info(const char *message) {
     printf("%s\n", message);
     util_press_to_continue();
