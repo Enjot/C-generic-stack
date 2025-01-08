@@ -2,6 +2,7 @@
 #include "stack.h"
 #include "my_student.h"
 #include "util.h"
+#include "handler.h"
 
 //SF controll leak of memory
 #define _CRTDBG_MAP_ALLOC
@@ -13,7 +14,7 @@ int main() {
 
     ui_run_stack_menu();
 
-    stack_destroy();
+    handler_free_resources();
 
     // //SF
      if (_CrtDumpMemoryLeaks())
