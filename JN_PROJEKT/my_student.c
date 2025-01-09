@@ -104,7 +104,7 @@ RESULT student_serialize(void *item) {
     return SUCCESS;
 }
 
-void *student_deserialize(FILE *file) {
+void *student_deserialize() {
     if (!handler_is_file()) return NULL;
 
     size_t surname_length;
@@ -194,11 +194,9 @@ void student_print_header() {
 
 void student_print_all(void* criteria) {
     student_print_header();
-
-
 }
 
-bool student_compare_surname(const MY_STUDENT* student, char* surname) {
+bool student_compare_surname(const MY_STUDENT* student, const char *surname) {
     if (!student || !surname) return false;
     return strcmp(student->surname, surname) == 0;
 }

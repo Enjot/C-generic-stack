@@ -256,7 +256,7 @@ static void ui_find_elements() {
 	free(found_items);
 }
 
-void ui_run_stack_menu(STACK* stack) {
+void ui_run_stack_menu() {
 	MENU_EVENT event = MAIN_MENU;
 
 	while (event != EXIT) {
