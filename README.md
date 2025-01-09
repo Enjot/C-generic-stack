@@ -10,7 +10,8 @@
 ✅ pointer types dynamically allocated and dynamically saved to file to reduce file size  
 ✨ checked for memory leaks by using Valgrind, no leaks found
 
-![image](https://github.com/user-attachments/assets/a42bd787-b2a8-4302-a84b-35376659f519)
+![image](https://github.com/user-attachments/assets/a42bd787-b2a8-4302-a84b-35376659f519)  
+There is example of implementation for MY_STUDENT struct  
 ![image](https://github.com/user-attachments/assets/8313d0a1-040c-4571-8bcc-f1497e54810c)
 
 (project for a university course)
