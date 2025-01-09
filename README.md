@@ -1,10 +1,10 @@
-# JN_PROJEKT
+# C generic stack
 
 ✅ C generic stack implementation (changing the used data type wouldn't affect the stack code itself)  
 ✅ based on void* pointers  
 ✅ generic push, pop, peek, clear, find at-depth operations  
 ✅ finding elements by depth and by custom comparing criteria (provided by data type)  
-✅ savind and loading to a binary file  
+✅ saving and loading to a binary file  
 ✅ error and message handling  
 ✅ simple console user interface  
 ✅ pointer types dynamically allocated and dynamically saved to file to reduce file size  
